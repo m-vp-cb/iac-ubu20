@@ -1,6 +1,9 @@
-Trying to spin off a Ubuntu 20.04 Server using vagrant.
-- Using chef habitat to install a web server;
-- Using basic vagrant settings, to reduce interaction with command line
+Trying to spin off a Ubuntu 18.04 Server using vagrant.
+- This will install chef automate server using a script which was provided by chef.io
+- with some small alterations made ready for my hyper-v system
+ - changed fixed ip to dhcp ip
+ - removed configuration which do not work on hyper-v setup
+ - 
 
 # Needed:
  - https://www.vagrantup.com/ (version 2.2.9)
