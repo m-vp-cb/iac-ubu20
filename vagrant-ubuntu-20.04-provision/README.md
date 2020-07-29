@@ -6,9 +6,9 @@ Trying to spin off a Ubuntu 20.04 Server using vagrant.
  - https://www.vagrantup.com/ (version 2.2.9)
  - https://docs.microsoft.com/nl-nl/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v
  - Vagrantfile (in the folder)
+ - Install bash script (in the folder)
  - Virtual Switch - Connection Type - External Network (you can add this using your Hyper-V manager)
  	- In this example named inet-sw01-nl
-
  
 # Spin off 
 with command 
@@ -58,3 +58,31 @@ https://www.vagrantup.com/docs/synced-folders/basic_usage
 This is now automaticaly set by adding configuration in the vagrantfile which selects the correct switch 
 config.vm.network "public_network", bridge: "inet-sw01-nl"
 https://www.vagrantup.com/docs/networking/public_network
+
+Lessons learned:
+* provision from shell works, need to watch rights (chmod in the provisioner)
+* use apt-get instead of apt (apt gives following message)
+```
+    default: WARNING:
+    default: apt
+    default:
+    default: does not have a stable CLI interface.
+    default: Use with caution in scripts.
+```
+* use apt-get with automatic confirmation flag --yes
+```
+    default: After this operation, 8,080 kB of additional disk space will be used.
+    default: Do you want to continue?
+    default:  [Y/n]
+    default: Abort.
+    default: inactive
+    default: Failed to get unit file state for apache2.service: No such file or directory
+    default: Unit apache2.service could not be found.
+The SSH command responded with a non-zero exit status. Vagrant
+assumes that this means the command failed. The output for this command
+should be in the log above. Please read the output to determine what
+went wrong.
+```
+
+
+
