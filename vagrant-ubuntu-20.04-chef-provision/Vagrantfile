@@ -1,0 +1,58 @@
+CFG_BOX      = 'bento/ubuntu-18.04'
+CFG_HOSTNAME = 'chef-automate.test'
+
+$deployscript = <<-SCRIPT
+export DEBIAN_FRONTEND='noninteractive'
+export CFG_IP=$(hostname -I | awk '{print $1}')
+apt-get -qq update
+apt-get install -y --no-install-recommends curl unzip
+apt-get clean
+sysctl -w vm.max_map_count=262144
+sysctl -w vm.dirty_expire_centisecs=20000
+
+echo "$CFG_IP ${CFG_HOSTNAME}" | tee -a /etc/hosts
+curl -fsSL https://packages.chef.io/files/current/automate/latest/chef-automate_linux_amd64.zip -o /tmp/chef-automate_linux_amd64.zip
+unzip -qod /usr/local/bin /tmp/chef-automate_linux_amd64.zip
+chmod +x /usr/local/bin/chef-automate
+chef-automate deploy --accept-terms-and-mlsa
+echo "Server is up and running. Please log in at https://${CFG_HOSTNAME}/"
+echo 'You may log in using credentials provided below:'
+cat /home/vagrant/automate-credentials.toml
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  class AcceptLicense
+    def to_s
+      return 'true' if ENV['ACCEPT_CHEF_TERMS_AND_MLSA'] == 'true'
+      puts <<TERMS
+To continue, you'll need to accept our terms of service:
+Terms of Service
+https://www.chef.io/terms-of-service
+
+Master License and Services Agreement
+https://www.chef.io/online-master-agreement
+
+I agree to the Terms of Service and the Master License and Services Agreement (y/n)
+TERMS
+      if STDIN.gets.chomp == 'y'
+        'true'
+      else
+        puts 'Chef Software Terms of Service and Master License and Services Agreement were not accepted'
+        exit 1
+      end
+    end
+  end
+  config.vm.box      = CFG_BOX
+  config.vm.hostname = CFG_HOSTNAME
+
+  config.vm.provider "hyperv" do |v|
+    v.memory     = 3100
+    v.cpus       = 2
+  end
+
+  config.vm.synced_folder '.', '/opt/a2-testing', create: true
+  
+  config.vm.provision     'shell', env: {
+                                         'CFG_HOSTNAME' => CFG_HOSTNAME,
+                                         'ACCEPT_CHEF_TERMS_AND_MLSA' => AcceptLicense.new}, inline: $deployscript
+end
