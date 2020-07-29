@@ -36,9 +36,9 @@ report a bug.
 
 Script: import_vm.ps1
 Error:
-```
-Bij Hyper-V is een fout opgetreden bij het openen van een object op computer xxxxx. Het object is niet gevonden. Het object is mogelijk verwijderd. Controleer of de Virtual Machine Management-service actief is op de computer.
 
+Bij Hyper-V is een fout opgetreden bij het openen van een object op computer xxxxx. Het object is niet gevonden. Het object is mogelijk verwijderd. Controleer of de Virtual Machine Management-service actief is op de computer.
+```
 This was caused by: hyper-v service was stopped
 
 ```
