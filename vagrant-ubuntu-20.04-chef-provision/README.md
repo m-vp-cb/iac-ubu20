@@ -43,16 +43,13 @@ started chef project generation
 ``` 
 chef generate cookbook vagrant-ubuntu-20.04-chef-provision 
 ```
-
 Changed kitchen.yml
 ```
   - name: iac-ubu-chef
-    run_list:
-      - recipe[apache::httpd]
-      network:
-      - ["public_network", bridge: "inet-sw01-nl"]
 ```
-and add to kitchen.yml
+and add to kitchen.yml (under name: vagrant)
 ```
 provider: hyperv
+network:
+- ["public_network", bridge: "inet-sw01-nl"]
 ```
