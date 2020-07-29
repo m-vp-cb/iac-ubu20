@@ -22,6 +22,14 @@ login
 ```
 kitchen login
 ```
+running tests (so destroy and rebuild and test)
+```
+kitchen verify
+```
+running verification of tests
+```
+kitchen verify
+```
 remove vm
 ```
 kitchen destroy
