@@ -26,7 +26,7 @@ Do you want to perform these actions?
 ```
 After confirmation 
 This will go quite fast, though to access the webserver takes some time.
-The installation of the web server will take place when the server is initialized.
+The installation of the web server will take place when the server is initialized. 
 
 ```
 Apply complete! Resources: 6 added, 0 changed, 0 destroyed.
@@ -73,4 +73,42 @@ Destroy complete! Resources: 6 destroyed.
 
  
 #Lessons learned
- - Make sure the ami is correct https://cloud-images.ubuntu.com/locator/ec2/
+ - I had some configuration fails, which you will not had if you used the terraform tutorial ...
+
+ ```
+ Error: Error launching instance, possible mismatch of Security Group IDs and Names. See AWS Instance docs here: https://terraform.io/docs/providers/aws/r/instance.html.
+
+        AWS Error: InvalidParameterValue: Value () for parameter groupId is invalid. The value cannot be empty
+        status code: 400, request id: 9dab60b4-abf7-4bc4-87ec-0408b2838102
+```
+Was caused by wrong item in aws_instance
+```
+security_group_ids
+   had to be 
+vpc_security_group_ids
+```
+
+```
+Error: Error creating Security Group: InvalidGroup.Duplicate: The security group 'web-server' already exists for VPC 'vpc-0ac095eb4e2c5f045'
+        status code: 400, request id: 79d5e458-7eb9-4488-a0b4-4b309c162c07
+
+  on m-vp-cb-network.tf line 11, in resource "aws_security_group" "web":
+  11: resource "aws_security_group" "web" {
+```
+Was caused by not using the subnet line in the instance resource
+```
+subnet_id = aws_subnet.default.id 
+```
+
+After a successfull instance i did not receive a dns name. 
+```
+Apply complete! Resources: 6 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+DNS =
+```
+This was caused by my newly created vpc. You have to define that dns names are enabled by adding the following line to the vpc configuration
+```
+enable_dns_hostnames = true
+```
